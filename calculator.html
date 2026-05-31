@@ -1,233 +1,120 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Defines the document as HTML5 -->
-
-    <!-- Character encoding for all languages -->
     <meta charset="UTF-8" />
-
-    <!-- Makes the page responsive on mobile and different screen sizes -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <!-- Title shown in browser tab -->
     <title>iPhone Calculator</title>
 
     <style>
-      /* ==============================
-         GLOBAL STYLES
-         ============================== */
-
       :root {
-        /* Sets default font for the entire app */
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-
-        /* Default background color (fallback) */
         background: #111;
-
-        /* Default text color */
         color: #fff;
       }
 
-      /* ==============================
-         PAGE LAYOUT
-         ============================== */
-
       body {
-        /* Removes default browser margin */
         margin: 0;
-
-        /* Full screen height */
         min-height: 100vh;
-
-        /* Centers calculator horizontally and vertically */
         display: flex;
         align-items: center;
         justify-content: center;
-
-        /* Background gradient for modern dark UI look */
         background: radial-gradient(circle at top, #444 0%, #111 55%);
       }
 
-      /* Wrapper container for app */
       #app {
-        /* Responsive width: max 420px, otherwise full screen minus padding */
         width: min(420px, 100vw - 32px);
-
-        /* Inner spacing */
         padding: 20px;
       }
 
-      /* ==============================
-         CALCULATOR CONTAINER
-         ============================== */
-
       .calculator {
-        /* Black calculator body like iPhone UI */
         background: #000;
-
-        /* Rounded corners for modern look */
         border-radius: 40px;
-
-        /* Internal spacing */
         padding: 24px 18px 16px;
-
-        /* Soft shadow for depth */
         box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
       }
 
-      /* ==============================
-         DISPLAY SCREEN
-         ============================== */
-
       .display {
-        /* Minimum height so UI doesn't collapse */
         min-height: 110px;
-
-        /* White text for numbers */
         color: #fff;
-
-        /* Align numbers to right like calculator */
         text-align: right;
-
-        /* Large font for readability */
         font-size: 4rem;
-
-        /* Slight spacing between letters */
         letter-spacing: -0.05em;
-
-        /* Internal padding for spacing */
         padding: 24px 16px 8px;
-
-        /* Prevents overflow issues with long numbers */
         word-break: break-all;
       }
 
-      /* Shows active operator or calculation status */
       .status-line {
-        /* Align text to right (like display) */
         text-align: right;
-
-        /* Smaller font than main display */
         font-size: 1.1rem;
-
-        /* Grey color for secondary information */
         color: #888;
-
-        /* Side padding for alignment */
         padding: 0 16px 10px;
-
-        /* Keeps layout stable even when empty */
         min-height: 20px;
       }
 
-      /* ==============================
-         BUTTON GRID
-         ============================== */
-
       .buttons {
-        /* Uses grid layout for calculator buttons */
         display: grid;
-
-        /* 4 equal columns like iPhone calculator */
         grid-template-columns: repeat(4, 1fr);
-
-        /* Space between buttons */
         gap: 12px;
       }
 
-      /* ==============================
-         BASE BUTTON STYLE
-         ============================== */
-
       .button {
-        /* Removes default button border */
         border: none;
-
-        /* Fully rounded buttons */
         border-radius: 100px;
-
-        /* Font size for button text */
         font-size: 1.6rem;
-
-        /* Bold text for clarity */
         font-weight: 600;
-
-        /* Vertical padding for height */
         padding: 18px 0;
-
-        /* Cursor pointer for interactivity */
         cursor: pointer;
-
-        /* Smooth animation on press */
         transition:
           transform 0.12s ease,
           background 0.12s ease;
       }
 
-      /* Button press animation */
       .button:active {
-        /* Slight shrink effect when clicked */
         transform: scale(0.96);
       }
 
-      /* ==============================
-         FUNCTION BUTTONS (AC, %, etc.)
-         ============================== */
-
       .button.function {
-        /* Dark grey background */
         background: #333;
-
-        /* White text */
         color: #fff;
       }
 
-      /* ==============================
-         OPERATOR BUTTONS (+ - × ÷ =)
-         ============================== */
-
       .button.operator {
-        /* Orange color like iPhone calculator */
         background: #ff9f0a;
-
-        /* Black text for contrast */
         color: #000;
       }
 
-      /* ==============================
-         NUMBER BUTTONS
-         ============================== */
-
       .button.number {
-        /* Dark button background */
         background: #1c1c1c;
-
-        /* White numbers */
         color: #fff;
       }
 
-      /* ==============================
-         ZERO BUTTON SPECIAL STYLE
-         ============================== */
-
       .button.zero {
-        /* Makes zero button span 2 columns */
         grid-column: span 2;
-
-        /* Align text to left like iOS calculator */
         text-align: left;
-
-        /* Extra padding for better spacing */
         padding-left: 36px;
+      }
+
+      /* Calculation History */
+      .history {
+        max-height: 120px;
+        overflow-y: auto;
+        text-align: right;
+        font-size: 0.9rem;
+        color: #777;
+        padding: 0 16px 10px;
+      }
+
+      .history-item {
+        padding: 3px 0;
+        border-bottom: 1px solid #222;
+        cursor: pointer;
       }
     </style>
   </head>
 
   <body>
-    <!-- Root container where JavaScript will inject calculator UI -->
     <div id="app"></div>
 
-    <!-- External JavaScript file containing calculator logic -->
     <script src="script.js"></script>
   </body>
 </html>

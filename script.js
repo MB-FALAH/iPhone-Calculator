@@ -2,87 +2,80 @@
 // MAIN CONTAINER (ROOT ELEMENT)
 // ==============================
 const app = document.getElementById("app");
-// Gets the main div from HTML where calculator will be inserted
 
 // ==============================
 // CREATE CALCULATOR UI CONTAINER
 // ==============================
 const calculator = document.createElement("section");
-// Creates main calculator wrapper element
-
 calculator.className = "calculator";
-// Adds CSS class for styling
 
 // ==============================
 // EXPRESSION LINE (FULL EQUATION DISPLAY)
 // ==============================
 const expressionLine = document.createElement("div");
-// Creates element to show full math expression (e.g., 4 + 3 + 8)
-
 expressionLine.className = "expression";
-// Assigns class for styling (not heavily styled in your CSS yet)
 
 // ==============================
 // MAIN DISPLAY (CURRENT VALUE)
 // ==============================
 const display = document.createElement("div");
-// Creates main output screen
-
 display.className = "display";
-// Applies iPhone-like display styling
-
 display.textContent = "0";
-// Default starting value
 
 // ==============================
 // STATUS LINE (SHOW ACTIVE OPERATOR)
 // ==============================
 const statusLine = document.createElement("div");
-// Creates small info line under display
-
 statusLine.className = "status-line";
-// Adds CSS styling class
+
+// ==============================
+// HISTORY SYSTEM (FIXED)
+// ==============================
+let history = [];
+
+const historyBox = document.createElement("div");
+historyBox.className = "history";
+
+function updateHistory() {
+  historyBox.innerHTML = "";
+
+  history
+    .slice()
+    .reverse()
+    .forEach((item) => {
+      const div = document.createElement("div");
+      div.className = "history-item";
+      div.textContent = item;
+
+      div.addEventListener("click", () => {
+        const result = item.split("=")[1]?.trim();
+        if (result) {
+          currentValue = result;
+          expression = result;
+          updateDisplay();
+          updateExpression();
+        }
+      });
+
+      historyBox.appendChild(div);
+    });
+}
 
 // ==============================
 // ADD ELEMENTS TO CALCULATOR
 // ==============================
-calculator.appendChild(expressionLine);
-// Adds expression line to calculator
-
-calculator.appendChild(display);
-// Adds main display
-
-calculator.appendChild(statusLine);
-// Adds operator status line
-
-// ==============================
-// BUTTON CONTAINER
-// ==============================
 const buttons = document.createElement("div");
-// Creates container for all calculator buttons
-
 buttons.className = "buttons";
-// Grid layout styling applied
 
 // ==============================
 // BUTTON CONFIGURATION (DATA-DRIVEN UI)
 // ==============================
 const buttonLabels = [
   { text: "AC", action: "clear", style: "function" },
-  // Clears all data
-
   { text: "⌫", action: "delete", style: "function" },
-  // Deletes last character
-
-  // { text: "+/-", action: "negate", style: "function" },
-  // Toggles sign (disabled for now)
-
   { text: "%", action: "percent", style: "function" },
-  // Converts value into percentage
 
   { text: "÷", action: "operator", value: "/", style: "operator" },
-  // Division operator
-
   { text: "7", action: "digit", value: "7", style: "number" },
   { text: "8", action: "digit", value: "8", style: "number" },
   { text: "9", action: "digit", value: "9", style: "number" },
@@ -99,44 +92,28 @@ const buttonLabels = [
 
   { text: "+", action: "operator", value: "+", style: "operator" },
   { text: "0", action: "digit", value: "0", style: "number zero" },
-  // Zero spans two columns
-
   { text: ".", action: "decimal", style: "number" },
-  // Decimal point
-
   { text: "=", action: "equals", style: "operator" },
-  // Calculates result
 ];
 
 // ==============================
-// CALCULATOR STATE VARIABLES
+// STATE VARIABLES
 // ==============================
 let currentValue = "0";
-// What user is currently typing
-
 let previousValue = null;
-// Stores first operand before operator
-
 let operator = null;
-// Stores current operator (+ - * /)
-
 let shouldResetScreen = false;
-// Determines if next input should overwrite screen
-
 let expression = "";
-// Stores full equation string for display
 
 // ==============================
-// UPDATE DISPLAY FUNCTIONS
+// DISPLAY FUNCTIONS
 // ==============================
 function updateDisplay() {
   display.textContent = currentValue;
-  // Updates main calculator screen
 }
 
 function updateExpression() {
   expressionLine.textContent = expression;
-  // Shows full equation (e.g., 4 + 5 + 2)
 }
 
 function updateStatus() {
@@ -148,11 +125,10 @@ function updateStatus() {
   };
 
   statusLine.textContent = operator ? map[operator] : "";
-  // Shows readable operator name
 }
 
 // ==============================
-// RESET CALCULATOR
+// RESET
 // ==============================
 function resetCalculator() {
   currentValue = "0";
@@ -164,11 +140,10 @@ function resetCalculator() {
   updateDisplay();
   updateExpression();
   updateStatus();
-  // Resets everything to initial state
 }
 
 // ==============================
-// DIGIT INPUT HANDLER
+// DIGITS
 // ==============================
 function appendDigit(digit) {
   if (currentValue === "0" || shouldResetScreen) {
@@ -179,14 +154,13 @@ function appendDigit(digit) {
   }
 
   expression += digit;
-  // Adds digit to expression string
 
   updateDisplay();
   updateExpression();
 }
 
 // ==============================
-// DECIMAL HANDLING
+// DECIMAL
 // ==============================
 function appendDecimal() {
   if (shouldResetScreen) {
@@ -204,25 +178,23 @@ function appendDecimal() {
 }
 
 // ==============================
-// OPERATOR HANDLER
+// OPERATOR
 // ==============================
 function setOperator(nextOperator) {
   if (operator !== null) compute();
-  // If already an operation exists, compute first
 
   previousValue = currentValue;
   operator = nextOperator;
   shouldResetScreen = true;
 
   expression += " " + nextOperator + " ";
-  // Adds operator into expression string
 
   updateStatus();
   updateExpression();
 }
 
 // ==============================
-// CALCULATION ENGINE
+// COMPUTE (FIXED HISTORY INSIDE)
 // ==============================
 function compute() {
   if (!operator || shouldResetScreen) return;
@@ -249,8 +221,14 @@ function compute() {
 
   expression += " = " + result;
 
-  currentValue = result.toString();
+  // HISTORY FIXED HERE
+  history.push(`${expression}`);
 
+  if (history.length > 10) history.shift();
+
+  updateHistory();
+
+  currentValue = result.toString();
   operator = null;
   previousValue = null;
   shouldResetScreen = true;
@@ -261,11 +239,10 @@ function compute() {
 }
 
 // ==============================
-// DELETE LAST CHARACTER
+// DELETE
 // ==============================
 function deleteLast() {
   currentValue = currentValue.length <= 1 ? "0" : currentValue.slice(0, -1);
-
   expression = expression.slice(0, -1);
 
   updateDisplay();
@@ -273,20 +250,7 @@ function deleteLast() {
 }
 
 // ==============================
-// TOGGLE SIGN (±)
-// ==============================
-function toggleSign() {
-  if (currentValue === "0") return;
-
-  currentValue = currentValue.startsWith("-")
-    ? currentValue.slice(1)
-    : "-" + currentValue;
-
-  updateDisplay();
-}
-
-// ==============================
-// PERCENT FUNCTION
+// PERCENT
 // ==============================
 function applyPercent() {
   currentValue = (parseFloat(currentValue) / 100).toString();
@@ -294,18 +258,14 @@ function applyPercent() {
 }
 
 // ==============================
-// CREATE BUTTONS DYNAMICALLY
+// CREATE BUTTONS
 // ==============================
 buttonLabels.forEach((item) => {
   const button = document.createElement("button");
-  // Create button element
-
   button.className = `button ${item.style}`;
   button.textContent = item.text;
 
   button.addEventListener("click", () => {
-    // Handle button actions
-
     switch (item.action) {
       case "digit":
         appendDigit(item.value);
@@ -325,7 +285,6 @@ buttonLabels.forEach((item) => {
       case "delete":
         deleteLast();
         break;
-      // case "negate": toggleSign(); break;
       case "percent":
         applyPercent();
         break;
@@ -333,20 +292,64 @@ buttonLabels.forEach((item) => {
   });
 
   buttons.appendChild(button);
-  // Add button to grid
 });
 
 // ==============================
-// FINAL RENDER
+// FINAL RENDER (FIXED)
 // ==============================
+calculator.appendChild(expressionLine);
+calculator.appendChild(display);
+calculator.appendChild(statusLine);
+calculator.appendChild(historyBox);
 calculator.appendChild(buttons);
-// Attach buttons to calculator
 
 app.appendChild(calculator);
-// Attach calculator to page
 
 // ==============================
-// INITIALIZE APP
+// INIT
 // ==============================
 resetCalculator();
-// Start with clean state
+
+// ==============================
+// KEYBOARD SUPPORT
+// ==============================
+document.addEventListener("keydown", (e) => {
+  const key = e.key;
+
+  if (!isNaN(key)) {
+    appendDigit(key);
+    return;
+  }
+
+  switch (key) {
+    case "+":
+      setOperator("+");
+      break;
+    case "-":
+      setOperator("-");
+      break;
+    case "*":
+      setOperator("*");
+      break;
+    case "/":
+      setOperator("/");
+      break;
+    case "Enter":
+    case "=":
+      compute();
+      break;
+    case "Backspace":
+      deleteLast();
+      break;
+    case "Escape":
+    case "Delete":
+      resetCalculator();
+      break;
+    case ".":
+      appendDecimal();
+      break;
+    case "%":
+      applyPercent();
+      break;
+  }
+});
